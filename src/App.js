@@ -25,6 +25,7 @@ function App(props) {
   const timeout = React.useRef();
   //const [markerPressed, setMarkerPressed] = React.useState(false);
   const [markers, setMarkers] = React.useState({});
+  const [localState, setLocalState] = React.useState('none');
 
   const [info, setInfo] = React.useState(false);
 
@@ -46,10 +47,12 @@ function App(props) {
   }
 
   const startDrag = (event) => {
+    console.log('start Drag')
     const id = event.target.attributes.value.value
     let data = markers;
     data[id].mode = 'drag'
     setMarkers(data);
+    setLocalState('drag')
   }
   const handleDrag = (event) => {
     const id = event.target.attributes.value.value
