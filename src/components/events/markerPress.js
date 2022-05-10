@@ -59,11 +59,11 @@ const useLongPress = (
   return {
     onMouseDown: e => start(e),
     onTouchStart: e => start(e),
-    onMouseUp: e => clear(e, shouldTriggerClick),
+    onMouseUp: e => started && clear(e, shouldTriggerClick),
     onMouseLeave: e => started && drag(e),
     onMouseMove: e => started && drag(e),
     onTouchMove: e => started && drag(e),
-    onTouchEnd: e => clear(e, shouldTriggerClick)
+    onTouchEnd: e => started && clear(e, shouldTriggerClick)
   };
 };
 
