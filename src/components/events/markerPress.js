@@ -33,11 +33,11 @@ const useLongPress = (
   const drag = useCallback(
     event => { 
       timeout.current && clearTimeout(timeout.current);
-      onDrag(event);
       setStarted(false);
       setLongPressTriggered(false);
-      if (shouldPreventDefault && target.current) {
-        target.current.removeEventListener("touchend", preventDefault);
+      onDrag(event);
+       if (shouldPreventDefault && target.current) {
+         target.current.removeEventListener("touchend", preventDefault);
       }
   }, [shouldPreventDefault, longPressTriggered]);
 
@@ -61,7 +61,7 @@ const useLongPress = (
     onTouchStart: e => start(e),
     onMouseUp: e => started && clear(e, shouldTriggerClick),
     onMouseLeave: e => started && drag(e),
-    onMouseMove: e => started && drag(e),
+    //onMouseMove: e => started && drag(e),
     onTouchMove: e => started && drag(e),
     onTouchEnd: e => started && clear(e, shouldTriggerClick)
   };

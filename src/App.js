@@ -1,4 +1,5 @@
 import * as React from 'react';
+import fastState from 'react-usestateref'
 import { Box, Button, Fab, Modal, Typography } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -24,7 +25,7 @@ function App(props) {
   const forceUpdate = useForceUpdate();
   const timeout = React.useRef();
   //const [markerPressed, setMarkerPressed] = React.useState(false);
-  const [markers, setMarkers] = React.useState({});
+  const [markers, setMarkers, markersRef] = fastState({});
   const [localState, setLocalState] = React.useState('none');
 
   const [info, setInfo] = React.useState(false);
@@ -49,14 +50,27 @@ function App(props) {
   const startDrag = (event) => {
     console.log('start Drag')
     const id = event.target.attributes.value.value
-    let data = markers;
+    console.log(id)
+    let data = markersRef.current;
+    console.log(markersRef.current)
     data[id].mode = 'drag'
     setMarkers(data);
     setLocalState('drag')
   }
+  const stopDrag = (event) => {
+    console.log('stop Drag')
+    console.log(event.target.attributes.value.value)
+    const id = event.target.attributes.value.value
+    let data = markers;
+    data[id].mode = 'static'
+    setMarkers(data);
+    setLocalState('static')
+    socket.emit('change', markersRef.current);  
+  }
   const handleDrag = (event) => {
     const id = event.target.attributes.value.value
     console.log('handleDrag x', event.pageX, 'y', event.pageY)
+    console.log(event.target.attributes.value.value)
     let data = markers;
     const [x, y] = 
       typeof(event.pageX) !== 'undefined' //if click coords presist or touch coords
@@ -139,6 +153,9 @@ function App(props) {
             onMouseMove={(event) => {
               markers[props.id].mode === 'arrow' && handleArrow(event);
               markers[props.id].mode === 'drag' && handleDrag(event);
+            }}
+            onMouseUp={(event) => {
+              markers[props.id].mode === 'drag' && stopDrag(event);
             }}
             style={{
                 backgroundColor: markers[props.id].color, // mode ? arrow/drag : any,
@@ -369,6 +386,7 @@ function App(props) {
 
   const merge = React.useCallback((change) => {
     setMarkers({...markers, ...change});
+    forceUpdate();
   }, []);
 
   const reset = React.useCallback((change) => {
